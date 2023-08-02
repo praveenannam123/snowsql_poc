@@ -1,0 +1,6 @@
+create or replace TABLE DEV.PUBLIC.SNOWSQL_DEV_POC1 (
+	A VARCHAR(1),
+	B VARCHAR(1),
+	C VARCHAR(1),
+	D VARCHAR(2)
+);
