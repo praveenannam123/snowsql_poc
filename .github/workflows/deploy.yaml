@@ -1,0 +1,64 @@
+# Very basic GitHub Action workflow, goes in ~/.github/workflows/deploy.yaml
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on any branch or tag commit
+  push:
+    branches:
+      - dev
+      - test
+      - prod
+    paths:
+      - 'DDL/**'
+    tags:
+      - "v*"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "deploy"
+  deploy:
+    runs-on: ubuntu-latest
+  
+    env:
+      SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
+      SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+      SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+      SNOWSQL_SCHEMA: ${{ secrets.SNOWSQL_SCHEMA }}
+      SNOWSQL_ROLE: ${{ secrets.SNOWSQL_ROLE }}
+      SNOWSQL_WAREHOUSE: ${{ secrets.SNOWSQL_WAREHOUSE }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: "Get branch name and save to env"
+        env:
+          IS_PR: ${{ github.EVENT_NAME == 'pull_request' }}
+        run: |
+          if ${IS_PR}; then
+            BRANCH_NAME="${GITHUB_HEAD_REF}"
+          else
+            BRANCH_NAME="${GITHUB_REF##*/}"
+          fi
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
+      - name: "Another step uses branch name"
+        env:
+          SNOWSQL_DATABASE: ${{ env.BRANCH_NAME}}
+        run: echo "Branch name is ${{ env.BRANCH_NAME}}" 
+            
+            
+      - name: Install SnowSQL
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
+          SNOWSQL_DEST=~/bin SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql-1.2.9-linux_x86_64.bash
+      
+      - name: Test installation
+        run:  ~/bin/snowsql -v
+         
+      - name: Execute SQL against Snowflake
+        run: ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f DDL/*.sql;
