@@ -48,13 +48,11 @@ jobs:
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             echo "Changed file name is ${file}" 
             echo "FILE_NAME=${file}" >> $GITHUB_ENV
-          done
-          
       - name: "Assign File name"
         env:
           FILE_NAME: ${{ env.FILE_NAME}}
         run: echo "Changed file name is ${{ env.FILE_NAME}}" 
-
+        
       - name: "Get branch name and save to env"
         env:
           IS_PR: ${{ github.EVENT_NAME == 'pull_request' }}
@@ -84,3 +82,8 @@ jobs:
         run:  |
           echo "$FILE_NAME file code will be to $BRANCH_NAME branch"
           ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $FILE_NAME;
+
+          done
+
+
+     
