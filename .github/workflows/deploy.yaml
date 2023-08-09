@@ -47,8 +47,12 @@ jobs:
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             FILE_NAME="${file}" >> $GITHUB_ENV
-            echo "${{env.FILE_NAME}} was changed"
           done
+          
+      - name: "Assign File name"
+        env:
+          FILE_NAME: ${{ env.FILE_NAME}}
+        run: echo "Changed file name is ${{ env.FILE_NAME}}" 
 
       - name: "Get branch name and save to env"
         env:
@@ -60,7 +64,8 @@ jobs:
             BRANCH_NAME="${GITHUB_REF##*/}"
           fi
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
-      - name: "Another step uses branch name"
+          
+      - name: "Assign branch name"
         env:
           SNOWSQL_DATABASE: ${{ env.BRANCH_NAME}}
         run: echo "Branch name is ${{ env.BRANCH_NAME}}" 
