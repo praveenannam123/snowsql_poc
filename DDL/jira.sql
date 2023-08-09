@@ -1,5 +1,6 @@
 create or replace table raw.chandra_code_dev
-(abc char(30),
-  xyz char(3) ,
-  wer char(20)
+(abc char(10),
+  xyz char(20) ,
+  wer char(20),
+  pqr char(20)
   )
