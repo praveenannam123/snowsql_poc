@@ -46,8 +46,8 @@ jobs:
       - name: List all changed files
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            FILE_NAME="${file}"
-            echo "$FILE_NAME was changed"
+            FILE_NAME="${file}" >> $GITHUB_ENV
+            echo "${{env.FILE_NAME}} was changed"
           done
 
       - name: "Get branch name and save to env"
