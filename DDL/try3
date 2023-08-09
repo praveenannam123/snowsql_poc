@@ -1,1 +1,1 @@
-create or replace table try3 (id int);
+create or replace table try3 (id varchar(20);
