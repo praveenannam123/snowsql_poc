@@ -1,4 +1,5 @@
-# Very basic GitHub Action workflow, goes in ~/.github/workflows/deploy.yaml
+# GitHub Action workflow, goes in ~/.github/workflows/deploy.yaml
+# this code uses snowsql to deploy the changes to Snowflake Database
 
 name: CI
 
@@ -22,6 +23,9 @@ jobs:
   # This workflow contains a single job called "deploy"
   deploy:
     runs-on: ubuntu-latest
+    name: changed-files
+    permissions:
+      pull-requests: read
   
     env:
       SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
@@ -35,7 +39,7 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
+       
       - name: "Get branch name and save to env"
         env:
           IS_PR: ${{ github.EVENT_NAME == 'pull_request' }}
@@ -46,12 +50,12 @@ jobs:
             BRANCH_NAME="${GITHUB_REF##*/}"
           fi
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
-      - name: "Another step uses branch name"
+          
+      - name: "Assign branch name"
         env:
           SNOWSQL_DATABASE: ${{ env.BRANCH_NAME}}
         run: echo "Branch name is ${{ env.BRANCH_NAME}}" 
-            
-            
+         
       - name: Install SnowSQL
         run: |
           curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash
@@ -59,6 +63,18 @@ jobs:
       
       - name: Test installation
         run:  ~/bin/snowsql -v
-         
-      - name: Execute SQL against Snowflake
-        run: ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f DDL/*.sql;
+        
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v37
+
+      - name: List all changed files and Execute SQL against Snowflake
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "Changed file name is ${file}" 
+            
+            echo "Execute SQL file against Snowflake"
+            echo "$file code will be deployed to $BRANCH_NAME branch"
+            ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $file;
+        
+          done
