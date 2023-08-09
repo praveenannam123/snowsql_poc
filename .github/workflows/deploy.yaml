@@ -22,7 +22,7 @@ jobs:
   # This workflow contains a single job called "deploy"
   deploy:
     runs-on: ubuntu-latest
-    name: Test changed-files
+    name: changed-files
     permissions:
       pull-requests: read
   
@@ -46,7 +46,7 @@ jobs:
       - name: List all changed files
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            FILE_NAME = $file
+            FILE_NAME="${file}"
             echo "$FILE_NAME was changed"
           done
 
