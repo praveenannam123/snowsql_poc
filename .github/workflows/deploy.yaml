@@ -75,4 +75,6 @@ jobs:
         run:  ~/bin/snowsql -v
          
       - name: Execute SQL against Snowflake
-        run: ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $FILE_NAME;
+        run:  |
+          echo "$FILE_NAME file code will be to $BRANCH_NAME branch"
+          ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $FILE_NAME;
