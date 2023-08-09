@@ -1,1 +1,1 @@
-create or replace table new_table (id as varchar);
+create or replace table merkle.new_table (id as varchar);
