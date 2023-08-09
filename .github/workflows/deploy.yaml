@@ -73,7 +73,7 @@ jobs:
             echo "Changed file name is ${file}" 
             
             echo "Execute SQL file against Snowflake"
-            echo "$FILE_NAME file code will be to $BRANCH_NAME branch"
+            echo "$file code will be to $BRANCH_NAME branch"
             ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $file;
         
           done
