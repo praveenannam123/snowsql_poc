@@ -46,7 +46,8 @@ jobs:
       - name: List all changed files
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            echo "$file was changed"
+            FILE_NAME = $file
+            echo "$FILE_NAME was changed"
           done
 
       - name: "Get branch name and save to env"
@@ -74,4 +75,4 @@ jobs:
         run:  ~/bin/snowsql -v
          
       - name: Execute SQL against Snowflake
-        run: ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $file;
+        run: ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $FILE_NAME;
