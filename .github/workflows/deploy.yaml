@@ -1,4 +1,5 @@
-# Very basic GitHub Action workflow, goes in ~/.github/workflows/deploy.yaml
+# GitHub Action workflow, goes in ~/.github/workflows/deploy.yaml
+# this code uses snowsql to deploy the changes to Snowflake Database
 
 name: CI
 
@@ -73,7 +74,7 @@ jobs:
             echo "Changed file name is ${file}" 
             
             echo "Execute SQL file against Snowflake"
-            echo "$file code will be to $BRANCH_NAME branch"
+            echo "$file code will be deployed to $BRANCH_NAME branch"
             ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $file;
         
           done
