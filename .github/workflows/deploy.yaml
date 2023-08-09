@@ -71,14 +71,9 @@ jobs:
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
             echo "Changed file name is ${file}" 
-            echo "FILE_NAME=${file}" >> $GITHUB_ENV
-            
-            echo "Assign File name"
-            FILE_NAME: ${{FILE_NAME}}
-            echo "Changed file name is ${{FILE_NAME}}" 
             
             echo "Execute SQL file against Snowflake"
             echo "$FILE_NAME file code will be to $BRANCH_NAME branch"
-            ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $FILE_NAME;
+            ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $file;
         
           done
