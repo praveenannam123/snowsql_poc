@@ -74,9 +74,8 @@ jobs:
             echo "FILE_NAME=${file}" >> $GITHUB_ENV
             
             echo "Assign File name"
-            env:
-            FILE_NAME: ${{ env.FILE_NAME}}
-            echo "Changed file name is ${{ env.FILE_NAME}}" 
+            FILE_NAME: ${{FILE_NAME}}
+            echo "Changed file name is ${{FILE_NAME}}" 
             
             echo "Execute SQL file against Snowflake"
             echo "$FILE_NAME file code will be to $BRANCH_NAME branch"
