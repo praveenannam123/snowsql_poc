@@ -1,5 +1,5 @@
-create or replace table snowsql_poc_meeting
-(abc char(1),
-  xyz char(2) ,
-  wer char(1)
+create or replace table raw.chandra_code_dev
+(abc char(30),
+  xyz char(3) ,
+  wer char(2)
   )

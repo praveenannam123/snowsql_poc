@@ -22,6 +22,9 @@ jobs:
   # This workflow contains a single job called "deploy"
   deploy:
     runs-on: ubuntu-latest
+    name: changed-files
+    permissions:
+      pull-requests: read
   
     env:
       SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
@@ -35,6 +38,21 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v37
+
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "FILE_NAME=${file}" >> $GITHUB_ENV
+          done
+          
+      - name: "Assign File name"
+        env:
+          FILE_NAME: ${{ env.FILE_NAME}}
+        run: echo "Changed file name is ${{ env.FILE_NAME}}" 
 
       - name: "Get branch name and save to env"
         env:
@@ -46,7 +64,8 @@ jobs:
             BRANCH_NAME="${GITHUB_REF##*/}"
           fi
           echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
-      - name: "Another step uses branch name"
+          
+      - name: "Assign branch name"
         env:
           SNOWSQL_DATABASE: ${{ env.BRANCH_NAME}}
         run: echo "Branch name is ${{ env.BRANCH_NAME}}" 
@@ -61,4 +80,6 @@ jobs:
         run:  ~/bin/snowsql -v
          
       - name: Execute SQL against Snowflake
-        run: ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f DDL/*.sql;
+        run:  |
+          echo "$FILE_NAME file code will be to $BRANCH_NAME branch"
+          ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $FILE_NAME;
