@@ -74,4 +74,4 @@ jobs:
         run:  ~/bin/snowsql -v
          
       - name: Execute SQL against Snowflake
-        run: ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f DDL/.sql;
+        run: ~/bin/snowsql -d $BRANCH_NAME -o exit_on_error=true -f $file;
