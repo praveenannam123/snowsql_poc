@@ -22,6 +22,9 @@ jobs:
   # This workflow contains a single job called "deploy"
   deploy:
     runs-on: ubuntu-latest
+    name: Test changed-files
+    permissions:
+      pull-requests: read
   
     env:
       SNOWSQL_PWD: ${{ secrets.SNOWSQL_PWD }}
@@ -35,6 +38,16 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v37
+
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
 
       - name: "Get branch name and save to env"
         env:
